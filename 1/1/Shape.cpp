@@ -4,64 +4,51 @@
 #include<cmath>
 
 
-Shape::Shape(int _type, int p_[])
+
+ShapeLSQ::ShapeLSQ(int _type, pointLSQ p_)
 {
-	type = _type;
+	p = p_;
     const char idx = 3;
     //расчитываем длину массива
 	switch (type)
 	{
 	case line:
-		p_length = 2*idx;
+		p_length = 2;
 		break;
 	case sqr:
-		p_length = 4*idx;
+		p_length = 4;
 		break;
 	case cube:
-		p_length = 8*idx;
-		break;
-	case circle:
-		p_length = 3*idx;
-		break;
-	case cylinder:
-		p_length = 4*idx;
+		p_length = 8;
 		break;
 	}
-	// заполн¤ем координаты фигуры
-	for (unsigned int i = 0; i < p_length; ++i)
-	{
-		p[i] = p_[i];
-	}
-
 
     Square(type);
     Volume(type);
 };
 
 // сторона а
-int Shape::sideA()
+int ShapeLSQ::sideA()
 {
-	return p[0] - p[3]; //8
+	return p.x[0] - p.x[1]; 
 }
 
 // сторона Б
- int Shape::sideB()
+ int ShapeLSQ::sideB()
 {
-	return p[1] - p[4]; //8
+	return p.y[0] - p.y[1]; 
 }
 
 // сторона С
-int Shape::sideC()
+int ShapeLSQ::sideC()
 {
-	return p[2] - p[5]; //8
+	return p.z[0] - p.z[1]; 
 }
 
 // площадь фигуры
- double Shape::Square(int type)
+ double ShapeLSQ::Square(int type)
 {
-
 	// стороны фигуры
-
 	switch (type)
 	{
 	case line:
@@ -73,29 +60,94 @@ int Shape::sideC()
 	case cube:
 		square = 2 * sideA() * sideB() + 2 * sideA() * sideC() + 2 * sideB() * sideC();
 		break;
-	case circle:
-		square = M_PI * p[2] * p[2];
-		break;
-	case cylinder:
-		square = M_PI * p[2] * p[2] + 2 * p[2] * p[3];
-		break;
 	}
 	return square;
 }
 
-// объем фигуры
-double Shape::Volume(int type)
-{
-	switch (type)
-	{
-	case cube:
-		volume = sideA() * sideB() * sideC();
-		break;
-	case cylinder:
-		volume = M_PI * p[2] * p[2] * p[3];
-		break;
-	default:
-		volume = 0;
-	}
-	return volume;
-}
+ double ShapeCC::Square(int type)
+ {
+	 // стороны фигуры
+
+	 switch (type)
+	 {
+	 case circle:
+		 square = M_PI * p.r * p.r;
+		 break;
+	 case cylinder:
+		 square = M_PI * p.r * p.r + 2 * p.r * p.h;
+		 break;
+	 }
+	 return square;
+ }
+
+ // объем фигуры
+ double ShapeLSQ::Volume(int type)
+ {
+	 switch (type)
+	 {
+	 case cube:
+		 volume = sideA() * sideB() * sideC();
+		 break;
+	 default:
+		 volume = 0;
+	 }
+	 return volume;
+ }
+
+ // объем фигуры
+ double ShapeCC::Volume(int type)
+ {
+	 switch (type)
+	 {
+	 case cylinder:
+		 volume = M_PI * p.r * p.r * p.h;
+		 break;
+	 default:
+		 volume = 0;
+	 }
+	 return volume;
+ }
+
+
+ 
+ void ShapeLSQ::shift(int m, int n, int k)
+ {
+
+	 for (unsigned int idx = 0; idx < p_length; idx++)
+	 {
+		 p.x[idx] += m; p.y[idx] += n; p.z[idx] += k;
+	 }
+ }
+
+ void ShapeLSQ::scaleX(int a)
+ {
+	 for (unsigned int idx = 0; idx < p_length; idx++)
+	 {
+		 p.x[idx] *= a;
+	 }
+ }
+
+ void ShapeLSQ::scaleY(int d)
+ {
+	 for (unsigned int idx = 1; idx < p_length; idx++)
+	 {
+		 p.y[idx] *= d;
+	 }
+ }
+
+ void ShapeLSQ::scaleZ(int e)
+ {
+	 for (unsigned int idx = 2; idx < p_length; idx++)
+	 {
+		 p.z[idx] *= e;
+	 }
+ }
+
+ void ShapeLSQ::scale(int s)
+ {
+	 for (unsigned int idx = 0; idx < p_length; idx++)
+	 {
+		 p.x[idx] /= s; p.y[idx] /= s; p.y[idx] /= s;
+	 }
+ }
+
